@@ -1,10 +1,14 @@
 const GameState = Object.freeze({
     WELCOMING:   Symbol("welcoming"),
-    FLAT:  Symbol("flat"),
+    JOIN:  Symbol("JOIN"),
     WAIT: Symbol("wait"),
-    MANSION: Symbol("mansion"),
-    BUTLER: Symbol("butler"),
-    TOAST: Symbol("toast")
+    CHOICE: Symbol("CHOICE"),
+    HORROR: Symbol("horror"),
+    HELP: Symbol("help"),
+    DEATH: Symbol("death"),
+    LAST: Symbol("last"),
+    PATH: Symbol("path")
+
 });
 
 module.exports = class Game{
@@ -17,45 +21,80 @@ module.exports = class Game{
         let sReply = "";
         switch(this.stateCur){
             case GameState.WELCOMING:
-                sReply = "It is a dark and rainy night. Bang! You have a flat tire. Too bad you don't have a spare. Do you WAIT or GO to the spooky mansion for help?";
-                this.stateCur = GameState.FLAT;
+                sReply = "Group of friends decided to go to an adventures trip to a deserted Island to explore and party. Do you wish join the party as you are alone on island? YES or NO";
+                this.stateCur = GameState.JOIN;
                 break;
-            case GameState.FLAT:
-                if(sInput.toLowerCase().match("wait")){
-                    sReply = "The road is deserted. After 1 hour there is still no help. Do you keep Waiting or do you go to the house?";
+            case GameState.JOIN:
+                if(sInput.toLowerCase().match("no")){
+                    sReply = "And hour later you can hear them enjoying  and you have nothing to so still. Do you wish to join? YES or NO";
+                    this.stateCur = GameState.JOIN;
+
                 }else{
-                    sReply ="On the door is a large knocker. Do you knock or run back to your car to wait?";
-                    this.stateCur = GameState.MANSION;
+                    sReply = "After exploring the Island,now  the group decided to set up a tent. Joint is rolled and music is on. Do you wish to smoke YES or NO?";
+                    this.stateCur = GameState.CHOICE;
                 }
                 break;
-            case GameState.MANSION:
-                if(sInput.toLowerCase().match("knock")){
-                    sReply = "The door opens and you are greeted by a hunch-back butler. He asks you to come in. Do you go in or run back to the car?"
-                    this.stateCur = GameState.BUTLER;
+            case GameState.CHOICE:
+                if(sInput.toLowerCase().match("yes")){
+                    sReply = "While setting your roll up you heard some weird noise out of bush .Will you, INVESTIGATE or WAIT?";
+                    this.stateCur = GameState.HORROR;
                 }else{
-                    sReply = "The road is deserted. After 1 hour there is still no help. Do you keep Waiting or do you go to the house?";
-                    this.stateCur = GameState.FLAT;
+                    sReply = "Oh Shit, there are some noises coming out of the woods. You have two options, INVESTIGATE or WAIT?";
+                    this.stateCur = GameState.HORROR;
 
                 }
                 break;
-            case GameState.BUTLER:
-                if(sInput.toLowerCase().match("run")){
-                    sReply = "The road is deserted. After 1 hour there is still no help. Do you keep Waiting or do you go to the house?";
-                    this.stateCur = GameState.FLAT;
+            case GameState.HORROR:
+                if(sInput.toLowerCase().match("investigate")){
+                    sReply = "You have seen a body hanging at the tree. Don't panic! Someone said. Do you want to CALL police or RUN back towards the tent";
+                    this.stateCur = GameState.HELP;
 
                 }else{
-                    sReply = "You seem to have walked in to a party. The host offers you some toast. Do you take the toast or ask to call a tow truck?";
-                    this.stateCur = GameState.TOAST;
+                    sReply = "Still the weird sound continues and every one is frightened .Would you INVESTIGATE or RUN back at tent ";
+                    this.stateCur = GameState.DEATH;
     
                 }
                 break;
-            case GameState.TOAST:
-                if(sInput.toLowerCase().match("toast")){
-                    sReply = "you enter a new world of adventure ... game over";
+            case GameState.HELP:
+                if(sInput.toLowerCase().match("call")){
+                    sReply =  " Police Call services are not available because of no network on island. Do you want to INVESTIGATE more or Look for the way to get off the Island";
+                    this.stateCur = GameState.DEATH;
+                }else{
+                    sReply = "you feel bit safe at the tent ,But Now you hear someone crying a loud for help .Will you try to help and  INVESTIGATE or FIND the way to go back? ";
+                  this.stateCur = GameState.DEATH;
+                }
+                break;
+            case GameState.DEATH:
+                if(sInput.toLowerCase().match("investigate")){
+                    sReply =  "You discover that body is of young girl with no limbs. you can hear the loud noise of braking bones coming towards you and taken one of your friend somewhere from you. Do you run AWAY or FIND your friend?";
+                    this.stateCur = GameState.LAST;
+                }else{
+                    sReply = "you couldn't find any way to go back !!! OH shit! you are stuck on island now .. you failed GAME OVER ";
+                    this.stateCur = GameState.WELCOMING;
+                        }
+                    break;
+            case GameState.LAST:
+                if(sInput.toLowerCase().match("away")){
+                    sReply =  "you reach the camp safely BUT you can not complete the level and you lose !!GAME OVER";
+                   
                     this.stateCur = GameState.WELCOMING;
                 }else{
-                    sReply = "the phone lines are down ... Would you like some toast perhaps?";
-                }
+                    sReply = "seems you really care for your friend  and came for his help you find 2 ways :full of TREES and a VILLAGE path."
+                    this.stateCur = GameState.PATH;
+                        
+                    }
+                    break;
+                 case GameState.PATH:
+                if(sInput.toLowerCase().match("village")){
+                    sReply =  "oh no! this path took you out of island and you lost your friend .. you lose !!GAME OVER";
+                   
+                    this.stateCur = GameState.WELCOMING;
+                }else{
+                    sReply = "Trees and quite haunting but you still walk in and there you get your friend trying to help some one else who was crying for help!! And Finally you all reaChed out YOU WON!!!  "
+                    this.stateCur = GameState.WELCOMING;
+                        
+                    }
+                    break;
         }
         return([sReply]);
     }
